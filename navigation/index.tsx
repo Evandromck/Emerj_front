@@ -9,15 +9,21 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
+import Header from '../components/Header';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
+
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import LoginScreen from '../screens/LoginScreen';
+import UserScreen from '../screens/UserScreen';
+
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import HomeScreen from '../screens/HomeScreen';
+import Chat from '../screens/Chat';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -43,6 +49,9 @@ function RootNavigator() {
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+      </Stack.Group>
     </Stack.Navigator>
   );
 }
@@ -58,16 +67,17 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Home"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
+        headerShown: true,
       }}>
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        name="Home"
+        component={HomeScreen}
+        options={({ navigation }: RootTabScreenProps<'Home'>) => ({
+          header: (props)=> <Header />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate('Modal')}
@@ -85,13 +95,48 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
+        name="Login"
+        component={LoginScreen}
+        options={({ navigation }: RootTabScreenProps<'Login'>) => ({
+          title: 'Login',
+          tabBarIcon: ({ color }) => <TabBarIcon name="sign-in" color={color} />,
+        })}
       />
+      <BottomTab.Screen
+        name="Chat"
+        component={Chat}
+        options={({ navigation }: RootTabScreenProps<'Chat'>) => ({
+          title: 'Chat',
+          tabBarIcon: ({ color }) => <TabBarIcon name="anchor" color={color} />,
+        })}
+      />
+
+      <BottomTab.Screen
+        name="User"
+        component={UserScreen}
+        options={({ navigation}: RootTabScreenProps<'User'>) => ({
+          title: 'Usuário',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          headerRight:() =>(
+            <Pressable 
+            onPress={ () => navigation.navigate('Settings')}
+            style={({pressed}) => ({
+              opacity: pressed ? 0.5 : 1,
+            })}
+            >
+             <FontAwesome
+                name="cog"
+                size={25}
+                color={Colors[colorScheme].text}
+                style={{ marginRight: 15 }}
+              />
+
+            </Pressable>
+          ),
+        })}    
+
+      />
+      
     </BottomTab.Navigator>
   );
 }
